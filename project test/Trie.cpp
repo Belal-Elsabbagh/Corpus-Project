@@ -14,52 +14,47 @@ Dictionary::Dictionary()
 }
 void Dictionary::addFromTextFile(string file_path)
 {
-	int repitions;
-	int count;
-	string word;
 	ifstream fin;
 	fin.open(file_path);
 	string line;
+	cout << "importing from file...\n";
 	while (getline(fin, line))
 	{
+		int repititions, count;
+		string word;
 		if (line == "") continue;
-		istringstream iss(line);
-		vector<string> values;
-		string val;
-		while (getline(iss, val, '\t'))
-		{
-			values.push_back(val);
-		}
+		vector<string> values = this->parseCorpusLine(line);
 		count = stoi(values[0]);
 		word = values[1];
-		repitions = stoi(values[2]);
-		insert(word, repitions);
-		cout << count << ", " << word << ", " << repitions << endl;
+		repititions = stoi(values[2]);
+		insert(word, repititions);
+		cout << count << ", " << word << ", " << repititions << endl;
 	}
 	cout << "imported from file...\n";
-
 	fin.close();
 }
 TrieNode::TrieNode() :count(0)
 {
-	for (int i = 0; i < ALPHABETS; i++)
+	for (int i = 0; i < 128; i++)
 		children[i] = NULL;
-
 }
 void Dictionary::insert(string word, int count)
 {
 	int i, index;
 	TrieNode* nodePtr = this->root;
-	for (i = 0; i < word.length(); i++)
+	for (char i : word)
 	{
-		index = static_cast<int>(word[i]);
+		index = getCharIndex(i);
 		if (nodePtr->children[index] == NULL) {
 			nodePtr->children[index] = new TrieNode();
 		}
 		nodePtr = nodePtr->children[index];
 	}
 	nodePtr->count = count;
-
+}
+int Dictionary::getCharIndex(char i)
+{
+	return static_cast<int>(i);
 }
 void Dictionary::autoComplete(TrieNode* root, string word, vector< string>& similarWords)
 {
@@ -113,30 +108,22 @@ void Dictionary::search(string word)
 		}
 		temp = temp->children[index];
 	}
-	if (temp->count == 0)
-		autoComplete(temp, word, similarWords);
+	if (temp->count == 0) autoComplete(temp, word, similarWords);
 
 	if (temp->count > 0)
 	{
-		cout << "\n\tThe word \"" << word << "\" was found with the count of \"" << temp->count << "\"";
+		cout << this->foundMsg(word, temp->count);
 		return;
 	}
-	cout << "\n\tThe word \"" << word << "\" was not found";
+	cout << this->notFoundMsg(word);
 	if (similarWords.size() == 0)
 		return;
-	cout << "\n\tDid you mean? ";
-	for (int i = 0; i < similarWords.size() && i < 10; i++)
-	{
-		cout << similarWords[i];
-		if (i == similarWords.size() - 1 || i == 9) cout << " or ";
-	}
+	cout << this->similarWordsMsg(similarWords);
 }
 bool Dictionary::isEmpty(TrieNode* temp)
 {
-	int i;
-	for (i = 0; i < ALPHABETS; i++)
-		if (temp->children[i])
-			return 0;
+	for (auto& i : temp->children)
+		if (i.second) return 0;
 	return 1;
 }
 TrieNode* Dictionary::removeUtil(TrieNode* temp, string word, int depth = 0)
@@ -150,7 +137,6 @@ TrieNode* Dictionary::removeUtil(TrieNode* temp, string word, int depth = 0)
 			temp = NULL;
 		}
 		return temp;
-
 	}
 	int index = static_cast<int>(word[depth]);
 	temp->children[index] = removeUtil(temp->children[index], word, depth + 1);
@@ -162,6 +148,18 @@ TrieNode* Dictionary::removeUtil(TrieNode* temp, string word, int depth = 0)
 	return temp;
 }
 
+vector<string> Dictionary::parseCorpusLine(string line)
+{
+	istringstream iss(line);
+	vector<string> values;
+	string val;
+	while (getline(iss, val, '\t'))
+	{
+		values.push_back(val);
+	}
+	return values;
+}
+
 void Dictionary::remove(string word)
 {
 	removeUtil(root, word);
@@ -171,10 +169,9 @@ void Dictionary::remove(string word)
 
 TrieNode* Dictionary::clearDictionary(TrieNode* temp)
 {
-	for (int i = 0; i < ALPHABETS; i++)
+	for (auto& i : temp->children)
 	{
-		if (temp->children[i])
-			temp->children[i] = clearDictionary(temp->children[i]);
+		if (i.second) i.second = clearDictionary(i.second);
 	}
 	delete temp;
 	temp = NULL;
@@ -184,4 +181,3 @@ Dictionary ::~Dictionary()
 {
 	clearDictionary(root);
 }
-

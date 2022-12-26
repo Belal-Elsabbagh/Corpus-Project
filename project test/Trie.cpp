@@ -30,10 +30,7 @@ void Dictionary::addFromTextFile(string file_path)
 	cout << "imported from file...\n";
 	fin.close();
 }
-TrieNode::TrieNode() :count(0)
-{
-	for (int i = 0; i < 128; i++) children[i] = NULL;
-}
+TrieNode::TrieNode() :count(0) {}
 
 void Dictionary::insert(string word, int count)
 {
@@ -75,9 +72,9 @@ void Dictionary::autoComplete(TrieNode* root, string word, vector< string>& simi
 		if (child != NULL) autoComplete(child, appendAsciToString(word, code), similarWords);
 	}
 }
-const std::string& Dictionary::appendAsciToString(std::string& word, int code)
+const std::string Dictionary::appendAsciToString(std::string& word, int code)
 {
-	return word + (char)(code);
+	return word += (char)(code);
 }
 void Dictionary::search(string word)
 {

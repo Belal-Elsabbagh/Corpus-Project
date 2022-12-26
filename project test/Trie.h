@@ -39,6 +39,7 @@ private:
 		}
 		return msg;
 	}
+	std::string appendAsciToString(std::string& word, int code);
 
 public:
 	Dictionary();
@@ -50,7 +51,6 @@ public:
 	int getCharIndex(char i);
 	void search(string);
 	void autoComplete(TrieNode*, string, vector<string>&);
-	const std::string& appendAsciToString(std::string& word, int code);
 	~Dictionary();
 };
 

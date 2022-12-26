@@ -10,7 +10,7 @@ using namespace std;
 Dictionary::Dictionary()
 {
 	root = new TrieNode();
-	
+
 }
 void Dictionary::addFromTextFile(string file_path)
 {
@@ -84,7 +84,7 @@ void Dictionary::autoComplete(TrieNode* root, string word, vector< string>& simi
 	{
 		int code = i.first;
 		TrieNode* child = i.second;
-		if (child!=NULL) autoComplete(child, word + (char)(code), similarWords);
+		if (child != NULL) autoComplete(child, word + (char)(code), similarWords);
 	}
 }
 void Dictionary::search(string word)
@@ -117,20 +117,19 @@ void Dictionary::search(string word)
 		autoComplete(temp, word, similarWords);
 
 	if (temp->count > 0)
-		cout << "\n\tThe word \"" << word << "\" was found with the count of \"" << temp->count << "\"";
-	else
 	{
-		cout << "\n\tThe word \"" << word << "\" was not found";
-		if (similarWords.size() == 0)
-			return;
-		cout << "\n\tDid you mean? ";
-		for (int i = 0; i < similarWords.size() && i < 10; i++)
-		{
-			cout << similarWords[i];
-			if (i == similarWords.size() - 1 || i == 9) cout << " or ";
-		}
+		cout << "\n\tThe word \"" << word << "\" was found with the count of \"" << temp->count << "\"";
+		return;
 	}
-
+	cout << "\n\tThe word \"" << word << "\" was not found";
+	if (similarWords.size() == 0)
+		return;
+	cout << "\n\tDid you mean? ";
+	for (int i = 0; i < similarWords.size() && i < 10; i++)
+	{
+		cout << similarWords[i];
+		if (i == similarWords.size() - 1 || i == 9) cout << " or ";
+	}
 }
 bool Dictionary::isEmpty(TrieNode* temp)
 {
@@ -153,7 +152,7 @@ TrieNode* Dictionary::removeUtil(TrieNode* temp, string word, int depth = 0)
 		return temp;
 
 	}
-	int index = word[depth] - 'a';
+	int index = static_cast<int>(word[depth]);
 	temp->children[index] = removeUtil(temp->children[index], word, depth + 1);
 	if (isEmpty(temp) && temp->count == 0)
 	{

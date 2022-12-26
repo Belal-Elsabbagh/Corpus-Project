@@ -20,13 +20,10 @@ void Dictionary::addFromTextFile(string file_path)
 	cout << "importing from file...\n";
 	while (getline(fin, line))
 	{
-		int repititions, count;
-		string word;
 		if (line == "") continue;
 		vector<string> values = this->parseCorpusLine(line);
-		count = stoi(values[0]);
-		word = values[1];
-		repititions = stoi(values[2]);
+		int count = stoi(values[0]), repititions = stoi(values[2]);
+		string word = values[1];
 		insert(word, repititions);
 		cout << count << ", " << word << ", " << repititions << endl;
 	}
@@ -35,16 +32,15 @@ void Dictionary::addFromTextFile(string file_path)
 }
 TrieNode::TrieNode() :count(0)
 {
-	for (int i = 0; i < 128; i++)
-		children[i] = NULL;
+	for (int i = 0; i < 128; i++) children[i] = NULL;
 }
+
 void Dictionary::insert(string word, int count)
 {
-	int i, index;
 	TrieNode* nodePtr = this->root;
 	for (char i : word)
 	{
-		index = getCharIndex(i);
+		int index = getCharIndex(i);
 		if (nodePtr->children[index] == NULL) {
 			nodePtr->children[index] = new TrieNode();
 		}
@@ -63,24 +59,25 @@ void Dictionary::autoComplete(TrieNode* root, string word, vector< string>& simi
 
 	input parameters: none
 
-	output value: none
 
+	output value: none
 	approach: a susbtring of the unfound word is received as a parameter to the function by the search
 			  function and that substring is successively permuted with the 26 alphabets to check whether
 			  any word exists corresponding to that alphabet and appended to the word and printed as a
 			  suggestion to the user
 	*/
-	TrieNode* temp = root;
-	if (root->count > 0)
-	{
-		similarWords.push_back(word);
-	}
-	for (auto& i : temp->children)
+	TrieNode* nodePtr = root;
+	if (nodePtr->count > 0) similarWords.push_back(word);
+	for (std::pair<int, TrieNode*> i : nodePtr->children)
 	{
 		int code = i.first;
 		TrieNode* child = i.second;
-		if (child != NULL) autoComplete(child, word + (char)(code), similarWords);
+		if (child != NULL) autoComplete(child, appendAsciToString(word, code), similarWords);
 	}
+}
+const std::string& Dictionary::appendAsciToString(std::string& word, int code)
+{
+	return word + (char)(code);
 }
 void Dictionary::search(string word)
 {
@@ -100,7 +97,7 @@ void Dictionary::search(string word)
 	vector <string> similarWords;
 	for (int i = 0; i < word.length(); i++)
 	{
-		int index = static_cast<int>(word[i]);
+		int index = getCharIndex(word[i]);
 		if (temp->children[index] == NULL)
 		{
 			autoComplete(temp, word.substr(0, i), similarWords);
@@ -109,22 +106,20 @@ void Dictionary::search(string word)
 		temp = temp->children[index];
 	}
 	if (temp->count == 0) autoComplete(temp, word, similarWords);
-
 	if (temp->count > 0)
 	{
 		cout << this->foundMsg(word, temp->count);
 		return;
 	}
 	cout << this->notFoundMsg(word);
-	if (similarWords.size() == 0)
-		return;
-	cout << this->similarWordsMsg(similarWords);
+	if (similarWords.size() > 0)
+		cout << this->similarWordsMsg(similarWords);
 }
 bool Dictionary::isEmpty(TrieNode* temp)
 {
 	for (auto& i : temp->children)
-		if (i.second) return 0;
-	return 1;
+		if (i.second) return false;
+	return true;
 }
 TrieNode* Dictionary::removeUtil(TrieNode* temp, string word, int depth = 0)
 {
@@ -138,7 +133,7 @@ TrieNode* Dictionary::removeUtil(TrieNode* temp, string word, int depth = 0)
 		}
 		return temp;
 	}
-	int index = static_cast<int>(word[depth]);
+	int index = getCharIndex(word[depth]);
 	temp->children[index] = removeUtil(temp->children[index], word, depth + 1);
 	if (isEmpty(temp) && temp->count == 0)
 	{
@@ -153,10 +148,7 @@ vector<string> Dictionary::parseCorpusLine(string line)
 	istringstream iss(line);
 	vector<string> values;
 	string val;
-	while (getline(iss, val, '\t'))
-	{
-		values.push_back(val);
-	}
+	while (getline(iss, val, '\t')) { values.push_back(val); }
 	return values;
 }
 
@@ -169,7 +161,7 @@ void Dictionary::remove(string word)
 
 TrieNode* Dictionary::clearDictionary(TrieNode* temp)
 {
-	for (auto& i : temp->children)
+	for (std::pair<int, TrieNode*> i : temp->children)
 	{
 		if (i.second) i.second = clearDictionary(i.second);
 	}

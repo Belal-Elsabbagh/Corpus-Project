@@ -137,7 +137,6 @@ TrieNode* Dictionary::removeUtil(TrieNode* temp, string word, int depth = 0)
 			temp = NULL;
 		}
 		return temp;
-
 	}
 	int index = static_cast<int>(word[depth]);
 	temp->children[index] = removeUtil(temp->children[index], word, depth + 1);

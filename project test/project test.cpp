@@ -23,12 +23,13 @@ int main()
 		cin >> ch;
 		cout << "\n\tENTER WORD: ";
 		cin >> word;
-
 		switch (ch)
 		{
-		case 1:obj.search(word);
+		case 1:
+			obj.search(word);
 			break;
-		case 2:obj.remove(word);
+		case 2:
+			obj.remove(word);
 			break;
 		}
 		cout << "\n\n\twant to continue (enter 'y' or 'Y') ";

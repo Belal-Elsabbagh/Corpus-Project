@@ -72,7 +72,7 @@ void Dictionary::autoComplete(TrieNode* root, string word, vector< string>& simi
 		if (child != NULL) autoComplete(child, appendAsciToString(word, code), similarWords);
 	}
 }
-const std::string Dictionary::appendAsciToString(std::string& word, int code)
+std::string Dictionary::appendAsciToString(std::string& word, int code)
 {
 	return word += (char)(code);
 }

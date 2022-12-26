@@ -12,16 +12,17 @@ Dictionary::Dictionary()
 	root = new TrieNode();
 	
 }
-void Dictionary::addFromTextFile()
+void Dictionary::addFromTextFile(string file_path)
 {
 	int repitions;
 	int count;
 	string word;
 	ifstream fin;
-	fin.open("Trial.txt");
+	fin.open(file_path);
 	string line;
 	while (getline(fin, line))
 	{
+		if (line == "") continue;
 		istringstream iss(line);
 		vector<string> values;
 		string val;
@@ -51,11 +52,9 @@ void Dictionary::insert(string word, int count)
 	TrieNode* nodePtr = this->root;
 	for (i = 0; i < word.length(); i++)
 	{
-		index = word[i] - 'a';
+		index = static_cast<int>(word[i]);
 		if (nodePtr->children[index] == NULL) {
 			nodePtr->children[index] = new TrieNode();
-			nodePtr = nodePtr->children[index];
-			continue;
 		}
 		nodePtr = nodePtr->children[index];
 	}
@@ -81,10 +80,11 @@ void Dictionary::autoComplete(TrieNode* root, string word, vector< string>& simi
 	{
 		similarWords.push_back(word);
 	}
-	for (int i = 0; i < ALPHABETS; i++)
+	for (auto& i : temp->children)
 	{
-		if (temp->children[i])
-			autoComplete(temp->children[i], word + (char)(i + 'a'), similarWords);
+		int code = i.first;
+		TrieNode* child = i.second;
+		if (child!=NULL) autoComplete(child, word + (char)(code), similarWords);
 	}
 }
 void Dictionary::search(string word)
@@ -100,12 +100,12 @@ void Dictionary::search(string word)
 	approach: the input word is send as a parameter to the search function which displays the word with its
 			  meaning (when found)
 	*/
-	int i, index;
+	int i = 0;
 	TrieNode* temp = root;
 	vector <string> similarWords;
-	for (i = 0; i < word.length(); i++)
+	for (int i = 0; i < word.length(); i++)
 	{
-		index = word[i] - 'a';
+		int index = static_cast<int>(word[i]);
 		if (temp->children[index] == NULL)
 		{
 			autoComplete(temp, word.substr(0, i), similarWords);
@@ -124,7 +124,7 @@ void Dictionary::search(string word)
 		if (similarWords.size() == 0)
 			return;
 		cout << "\n\tDid you mean? ";
-		for (i = 0; i < similarWords.size() && i < 10; i++)
+		for (int i = 0; i < similarWords.size() && i < 10; i++)
 		{
 			cout << similarWords[i];
 			if (i == similarWords.size() - 1 || i == 9) cout << " or ";

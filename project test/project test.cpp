@@ -11,9 +11,9 @@ int main()
 {
 	Dictionary obj;
 	string word;
-	int n, ch;
+	int ch;
 	char c = 'y';
-	obj.addFromTextFile();
+	obj.addFromTextFile("wifeys.txt");
 	do
 	{
 		system("cls");
@@ -30,7 +30,6 @@ int main()
 			break;
 		case 2:obj.remove(word);
 			break;
-
 		}
 		cout << "\n\n\twant to continue (enter 'y' or 'Y') ";
 		cin >> c;

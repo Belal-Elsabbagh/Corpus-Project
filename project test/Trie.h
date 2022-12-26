@@ -5,12 +5,14 @@
 #include<fstream>
 #include<conio.h>
 #include <Windows.h>
+#include <array>
+#include <map>
 #define ALPHABETS 26
 using namespace std;
 class TrieNode
 {
 	int count;
-	TrieNode* children[ALPHABETS];
+	std::map<int, TrieNode*> children;
 	friend class Dictionary;
 public:
 	TrieNode();
@@ -22,7 +24,7 @@ class Dictionary
 
 public:
 	Dictionary();
-	void addFromTextFile();
+	void addFromTextFile(string file_path);
 	bool isEmpty(TrieNode*);
 	TrieNode* removeUtil(TrieNode*, string, int);
 	TrieNode* clearDictionary(TrieNode*);

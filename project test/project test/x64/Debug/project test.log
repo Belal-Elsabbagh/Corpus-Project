@@ -1,0 +1,6 @@
+﻿  project test.cpp
+C:\Users\DELL\source\repos\project test\project test\project test.cpp(20,12): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+C:\Users\DELL\source\repos\project test\project test\project test.cpp(54,12): warning C4129: 'P': unrecognized character escape sequence
+C:\Users\DELL\source\repos\project test\project test\project test.cpp(55,12): warning C4129: 'P': unrecognized character escape sequence
+C:\Users\DELL\source\repos\project test\project test\project test.cpp(18,6): warning C4101: 'n': unreferenced local variable
+  project test.vcxproj -> C:\Users\DELL\source\repos\project test\x64\Debug\project test.exe

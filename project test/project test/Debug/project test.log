@@ -1,0 +1,3 @@
+﻿  project test.cpp
+C:\Users\DELL\source\repos\project test\project test\project test.cpp(9,11): warning C4101: 'root': unreferenced local variable
+  project test.vcxproj -> C:\Users\DELL\source\repos\project test\Debug\project test.exe
